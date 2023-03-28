@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const jobsRouter = require('./routes/jobs');
+const userRouter = require('./routes/user');
 
 const app = express();
 
@@ -16,6 +17,7 @@ require('./db');
 
 //routes
 app.use('/jobs', jobsRouter);
+app.use('/jobs', userRouter);
 
 // Start server
 const port = process.env.PORT || 3000;

@@ -1,111 +1,74 @@
 // routes/jobs.js
 const express = require('express');
 const router = express.Router();
-const Job = require('../models/Job');
+const Job = require('../models/job');
+const requireAuth = require('../middleware/requireAuth')
 
-// Get all jobs
+
 router.get('/', async (req, res) => {
-  try {
-    const jobs = await Job.find();
-    res.json(jobs);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  const jobs = await Job.find();
+  res.json(jobs);
+});
+
+router.get('/:id', async (req, res) => {
+  const job = await Job.findById(req.params.id);
+  if (!job) {
+    res.status(404).json({ message: 'Job not found' });
+  } else {
+    res.json(job);
   }
 });
 
-// Get single job
-router.get('/:id', getJob, (req, res) => {
-  res.json(res.job);
-});
-
-// Create job
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const job = new Job({
     title: req.body.title,
     description: req.body.description,
-    location: req.body.location,
-    salary: req.body.salary,
-    company: req.body.company
+    company: req.body.company,
+    location: req.body.location
   });
-
   try {
     const newJob = await job.save();
     res.status(201).json(newJob);
   } catch (err) {
     res.status(400).json({ message: err.message });
-    }
- });
+  }
+});
 
- // Update job
-router.patch('/:id', getJob, async (req, res) => {
-    if (req.body.title != null) {
-    res.job.title = req.body.title;
+router.put('/:id', requireAuth, async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) {
+      res.status(404).json({ message: 'Job not found' });
+    } else {
+      job.title = req.body.title;
+      job.description = req.body.description;
+      job.company = req.body.company;
+      job.location = req.body.location;
+      const updatedJob = await job.save();
+      res.json(updatedJob);
     }
-    if (req.body.description != null) {
-    res.job.description = req.body.description;
-    }
-    if (req.body.location != null) {
-    res.job.location = req.body.location;
-    }
-    if (req.body.salary != null) {
-    res.job.salary = req.body.salary;
-    }
-    if (req.body.company != null) {
-    res.job.company = req.body.company;
-    }
-    try {
-    const updatedJob = await res.job.save();
-    res.json(updatedJob);
-    } catch (err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
-    }
-    });
+  }
+});
 
-    // Delete job
-router.delete('/:id', getJob, async (req, res) => {
-    try {
-    await res.job.remove();
-    res.json({ message: 'Job deleted' });
-    } catch (err) {
-    res.status(500).json({ message: err.message });
-    }
-    });
-    
-    // Middleware function to get job by ID
-    async function getJob(req, res, next) {
-    let job;
-    try {
-    job = await Job.findById(req.params.id);
-    if (job == null) {
-    return res.status(404).json({ message: 'Job not found' });
-    }
-    } catch (err) {
-    return res.status(500).json({ message: err.message });
-    }
-    
-    res.job = job;
-    next();
-    }
-
-    router.get('/location/:location', async (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const jobs = await Job.find({ location: req.params.location });
-    res.json(jobs);
+    const job = await Job.findById(req.params.id);
+    if (!job) {
+      res.status(404).json({ message: 'Job not found' });
+    } else {
+      await job.remove();
+      res.json({ message: 'Job deleted successfully' });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-router.get('/company/:company', async (req, res) => {
-  try {
-    const jobs = await Job.find({ company: req.params.company });
-    res.json(jobs);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+module.exports = router;
 
     
-    module.exports = router;
+
     
 

@@ -1,23 +1,28 @@
 const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
 require('dotenv').config();
-const jobsRouter = require('./routes/jobs');
-const userRouter = require('./routes/user');
+const connectDB = require('./db')
 
-const app = express();
 
-// Body parser middleware
-app.use(express.json());
 
 // Connect to database
-require('./db');
+connectDB();
+
+// Body parser middleware
+app.use(express.json());  
 
 
+
+//home route
+app.get('/',async (req, res) => {
+    res.json("home page");
+  })
 
 
 //routes
 app.use('/jobs', jobsRouter);
-app.use('/jobs', userRouter);
+//app.use('/jobs', userRouter);
 
 // Start server
 const port = process.env.PORT || 3000;

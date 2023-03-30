@@ -1,4 +1,4 @@
-const requireAuth = (req, res, next) => {
+/*const requireAuth = (req, res, next) => {
     if (req.user) {
       // User is authenticated
       if (req.user.role === 'admin') {
@@ -14,4 +14,4 @@ const requireAuth = (req, res, next) => {
     }
   }
 
-  model.exports = requireAuth
+  model.exports = requireAuth*/

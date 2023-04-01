@@ -1,29 +1,33 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 require('dotenv').config();
-const connectDB = require('./db')
 
-
-
-// Connect to database
-connectDB();
-
-// Body parser middleware
-app.use(express.json());  
-
-
-
-//home route
-app.get('/',async (req, res) => {
-    res.json("home page");
-  })
-
-
-//routes
-app.use('/jobs', jobsRouter);
-//app.use('/jobs', userRouter);
-
-// Start server
+const app = express();
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server started on port ${port}`));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
+
+const dbUrl = process.env.DB_CONNECT;
+mongoose.connect(dbUrl, { useNewUrlParser: true });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+  console.log('Connected to database!');
+});
+
+/*const authRoutes = require('./routes/auth');
+const jobRoutes = require('./routes/jobs');
+const userRoutes = require('./routes/users');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/users', userRoutes);*/
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});

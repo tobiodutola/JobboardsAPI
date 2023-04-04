@@ -20,13 +20,11 @@ db.once('open', () => {
   console.log('Connected to database!');
 });
 
-/*const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
-const userRoutes = require('./routes/users');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/users', userRoutes);*/
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);

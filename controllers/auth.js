@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const saltPassword = await bcrypt.genSalt(10)
+    const saltPassword = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, saltPassword);
     const user = new User({
       name,
@@ -23,6 +23,7 @@ exports.register = async (req, res) => {
     });
   }
 };
+
 
 exports.login = async (req, res) => {
   try {
